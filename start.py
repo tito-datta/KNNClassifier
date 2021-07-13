@@ -1,4 +1,5 @@
 from sklearn.model_selection import train_test_split
+import sklearn.metrics as metrics
 import pandas as pd
 from KNN_classifier import Knn_Classifier as knn_classifier
 
@@ -12,6 +13,13 @@ X_Train,X_Test,Y_Train,Y_Test = train_test_split(predictors, target, test_size=0
 diabetes_train = pd.DataFrame(data=X_Train, columns=predictors.columns).assign(Outcome=Y_Train)
 diabetes_test = pd.DataFrame(data=X_Test, columns=predictors.columns).assign(Outcome=Y_Test)
 
-knn = knn_classifier(diabetes_train,3)
+for i in range(25,50):
+    knn = knn_classifier(diabetes_train,i,'Outcome')
+    predicted = []
+    for row in diabetes_test.itertuples():
+        predicted.append(knn.predict(row[0:8]))
 
-print(knn.predict(X_Test[:1].values))
+    accuracy = metrics.accuracy_score(Y_Test, predicted)
+    print(f'The accuracy of the model for k = {i} is {round(accuracy, 4)}.')
+
+
